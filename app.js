@@ -6,14 +6,19 @@ const app = express();
 
 app.use(express.json()); //json 데이터 자동으로 파싱 후 req.body에 저장
 
-// 루트 경로('/')에 대한 GET 요청을 처리합니다.
 app.get('/wow', (req, res) => {
-  // 응답 본문에 'Hello, World!'를 보냅니다.
   res.send('get wow');
 });
 
 app.post('/wow', (req, res) => {
-  // 응답 본문에 'Hello, World!'를 보냅니다.
+  res.send(req.body);
+});
+
+app.get('/wow/:person',(req,res)=>{
+  res.send(req.params.person);
+})
+
+app.post('/wow/:person', (req,res)=>{
   res.send(req.body);
 });
 
