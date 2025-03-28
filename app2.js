@@ -1,18 +1,17 @@
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
-require('dotenv').config();
+const dotenv = require('dotenv');
 
+dotenv.config();
 const app = express();
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
     password: process.env.DB_PWD,
-    database: 'traveldb'
+    database: process.env.DB_NAME
 });
-
-travelList = ['서울', '대전', '제주도', '강릉'];
 
 app.set('view engine', 'ejs');
 // __dirname : 현재 파일이 속한 절대경로
@@ -21,8 +20,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 db.connect(err=>{
     if(err){
-        console.error('MySQL 연결 실패 : ', err);-----
-++++++1        return;
+        console.error('MySQL 연결 실패 : ', err);
+        return;
     }
     console.log('MySQL 연결 성공');
 });
@@ -32,7 +31,17 @@ app.get('/', (req,res)=>{
 });
 
 app.get('/travel', (req,res)=>{
-    res.render('travel', {travelList});
+    const query = 'SELECT id, name FROM travellist';
+    db.query(query, (err, results)=>{
+        if(err){
+            console.error('DB 쿼리 실패');
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+        const travelList = results;
+        res.render('travel', {travelList});
+    });
+
 });
 
 app.listen(3000, ()=>{
