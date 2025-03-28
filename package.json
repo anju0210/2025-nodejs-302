@@ -17,6 +17,9 @@
   "homepage": "https://github.com/anju0210/2025-nodejs-302#readme",
   "description": "",
   "dependencies": {
-    "express": "^4.21.2"
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "mysql2": "^3.14.0"
   }
 }
