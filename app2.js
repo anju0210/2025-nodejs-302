@@ -61,6 +61,11 @@ app.get('/travel/:id', (req, res)=>{
     })
 })
 
+//use: 모든 mothod에 대해, 경로가 없으면?: 모든 경로에 대해
+app.use((req, res)=>{
+    res.status(404).send('Not Found');
+});
+
 app.listen(3000, ()=>{
     console.log('서버 실행중');
 });
