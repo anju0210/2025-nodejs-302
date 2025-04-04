@@ -75,7 +75,12 @@ app.post('/travel', (req, res)=>{
         }
         res.redirect('/travel');
     })
-})
+});
+
+app.get('/add-travel', (req,res)=>{
+    res.render('addTravel');
+});
+
 //use: 모든 mothod에 대해, 경로가 없으면?: 모든 경로에 대해
 app.use((req, res)=>{
     res.status(404).send('Not Found');
