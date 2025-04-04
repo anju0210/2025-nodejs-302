@@ -13,6 +13,9 @@ const db = mysql.createConnection({
     database: process.env.DB_NAME
 });
 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
 app.set('view engine', 'ejs');
 // __dirname : 현재 파일이 속한 절대경로
 // path.join을 하면 운영체제에 맞추어 경로 구분자를 알아서 정해준다
@@ -31,8 +34,8 @@ app.get('/', (req,res)=>{
 });
 
 app.get('/travel', (req,res)=>{
-    const query = 'SELECT id, name FROM travellist';
-    db.query(query, (err, results)=>{
+    const _query = 'SELECT id, name FROM travellist';
+    db.query(_query, (err, results)=>{
         if(err){
             console.error('DB 쿼리 실패');
             res.status(500).send('Internal Server Error');
@@ -61,6 +64,18 @@ app.get('/travel/:id', (req, res)=>{
     })
 })
 
+app.post('/travel', (req, res)=>{
+    const {name} = req.body;
+    const _query = 'INSERT INTO travellist (name) VALUES (?)';
+    db.query(_query, [name], (err, results)=>{
+        if(err){
+            console.error('DB 쿼리 실패', err);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+        res.redirect('/travel');
+    })
+})
 //use: 모든 mothod에 대해, 경로가 없으면?: 모든 경로에 대해
 app.use((req, res)=>{
     res.status(404).send('Not Found');
