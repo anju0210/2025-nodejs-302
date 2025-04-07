@@ -3,6 +3,8 @@ const path = require('path');
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 
+const PORT = 3000;
+
 dotenv.config();
 const app = express();
 
@@ -104,6 +106,6 @@ app.use((req, res)=>{
     res.status(404).send('Not Found');
 });
 
-app.listen(3000, ()=>{
-    console.log('서버 실행중');
+app.listen(PORT, ()=>{
+    console.log(`서버가 http://localhost:${PORT}에서 실행 중입니다.`);
 });
