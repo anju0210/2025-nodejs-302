@@ -1,13 +1,11 @@
 const express = require('express');
-const db = require('../db')
+const Travel = require('../models/Travel');
 const router = express.Router();
 
 //게시글 목록
 router.get('/', async (req,res)=>{
     try{
-        const _query = 'SELECT id, name FROM travellist';
-        const [results] = await db.query(_query);
-        const travelList = results;
+        const travelList = await Travel.findAll({attributes:['id', 'name']});
         res.render('travel', {travelList});
     }
     catch(err){
@@ -25,8 +23,7 @@ router.get('/add', (req,res)=>{
 router.post('/', async (req, res)=>{
     const {name} = req.body;
     try{
-        const _query = 'INSERT INTO travellist (name) VALUES (?)';
-        await db.query(_query, [name]);
+        await Travel.create({name});
         res.redirect('/travel');
     }
     catch(err){
@@ -39,14 +36,12 @@ router.post('/', async (req, res)=>{
 router.get('/:id', async (req, res)=>{
     const travelID = req.params.id;
     try{
-        const _query = 'SELECT * FROM travellist WHERE id = ?';
-        const [results] = await db.query(_query, [travelID]);
+        const travel = await Travel.findByPk(travelID);
 
-        if(results.length===0){
+        if(!travel){
             res.status(404).send('Not Found');
         }
         
-        const travel = results[0];
         res.render('travelDetail', {travel});
     }
     catch(err){
@@ -59,14 +54,12 @@ router.get('/:id', async (req, res)=>{
 router.get('/:id/edit', async (req, res)=>{
     const travelID = req.params.id;
     try{
-        const query = 'SELECT * FROM travellist WHERE id = ?';
-        const [results] = await db.query(query, [travelID]);
+        const travel = await Travel.findByPk(travelID);
 
-        if(results.length===0){
+        if(!travel){
             res.status(404).send('Not Found');
         }
 
-        const travel = results[0];
         res.render('editTravel', {travel});
     }
     catch(err){
@@ -80,9 +73,13 @@ router.put('/:id', async (req, res)=>{
     const travelID = req.params.id;
     const {name} = req.body;
     try{
-        const _query = 'UPDATE travellist SET name = ? WHERE id = ?';
-        await db.query(_query,  [name, travelID]);
+        const travel = await Travel.findByPk(travelID);
 
+        if(!travel){
+            res.status(404).send('Not Found');
+        }
+
+        await travel.update({name});
         res.render('updateSuccess');
     }
     catch(err){
@@ -95,8 +92,13 @@ router.put('/:id', async (req, res)=>{
 router.delete('/:id',  async (req, res)=>{
     const travelID = req.params.id;
     try{
-        const _query = 'DELETE FROM travellist WHERE id = ?';
-        await db.query(_query, [travelID]);
+        const travel = await Travel.findByPk(travelID);
+
+        if(!travel){
+            res.status(404).send('Not Found');
+        }
+
+        await travel.destroy();
 
         res.render('deleteSuccess');
     }
